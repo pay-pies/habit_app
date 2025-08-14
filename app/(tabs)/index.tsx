@@ -6,7 +6,6 @@ export default function Index() {
     <View
       style={styles.view}>
       <Text>Edit app/index.tsx to edit this screen.</Text>
-      <Link href="/login" style= {styles.navButton}>Login Page</Link>
     </View>
   );
 }
@@ -16,12 +15,5 @@ const styles = StyleSheet.create({
       flex: 1,
       justifyContent: "center",
       alignItems: "center",
-    },
-  navButton: {
-      width: 100, 
-      height: 20, 
-      backgroundColor: 'coral', 
-      borderRadius: 8,
-      textAlign: 'center',
     }
 })
