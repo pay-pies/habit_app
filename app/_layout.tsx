@@ -12,8 +12,10 @@ function RouteGuard({children}: {children: React.ReactNode}) {
     const inAuthGroup = segments[0] === "auth";
 
     if (!user && !inAuthGroup && !isLoadingUser) {
+      console.log("No user found. Redirecting to /auth");
       router.replace("/auth");
     } else if (user && inAuthGroup && !isLoadingUser) {
+      console.log("User found. Redirecting to /");
       router.replace("/");
     }
   }, [user, segments, isLoadingUser, router]);

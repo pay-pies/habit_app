@@ -65,7 +65,9 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         try{
         await account.deleteSession("current");
         setUser(null);
+        console.log("Sign out successful. User state is null.");
         } catch (error) {
+            console.log("Sign out failed:", error);
             console.log(error);
         }
     };
