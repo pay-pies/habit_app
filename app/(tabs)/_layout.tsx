@@ -32,7 +32,7 @@ export default function TabsLayout() {
           title: "Streaks", 
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons 
-              name="chart-line" 
+              name="fire" 
               size={size} 
               color={color} />)}}/>
       <Tabs.Screen 

@@ -1,6 +1,8 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect} from "react";
 import { AuthProvider, useAuth } from '../lib/auth-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import {PaperProvider} from "react-native-paper"
 
 function RouteGuard({children}: {children: React.ReactNode}) {
   const router = useRouter();
@@ -10,14 +12,18 @@ function RouteGuard({children}: {children: React.ReactNode}) {
   useEffect(() => {
     if (isLoadingUser) return;
     const inAuthGroup = segments[0] === "auth";
-
+    console.log("before if else")
+    console.log("User:", user);
+    console.log("In Auth Group:", inAuthGroup);
     if (!user && !inAuthGroup && !isLoadingUser) {
       console.log("No user found. Redirecting to /auth");
       router.replace("/auth");
+      // Use window.location.href for client-side navigation
     } else if (user && inAuthGroup && !isLoadingUser) {
       console.log("User found. Redirecting to /");
       router.replace("/");
     }
+    console.log("after if else")
   }, [user, segments, isLoadingUser, router]);
   
 
@@ -27,12 +33,16 @@ function RouteGuard({children}: {children: React.ReactNode}) {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <RouteGuard>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-          <Stack.Screen name="auth" options={{ headerShown: false }} />
-        </Stack>
-      </RouteGuard>
+      <PaperProvider>
+        <SafeAreaProvider>
+          <RouteGuard>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+              {/* <Stack.Screen name="auth" options={{ headerShown: false }} /> */}
+            </Stack>
+          </RouteGuard>
+        </SafeAreaProvider>
+      </PaperProvider>
     </AuthProvider>
   );
 }

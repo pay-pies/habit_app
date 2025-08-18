@@ -7,3 +7,7 @@ export const client = new Client()
     .setPlatform(process.env.EXPO_PUBLIC_APPWRITE_PLATFORM!);
 
 export const account = new Account(client);
+export const databased = new Databases(client);
+
+export const DATABASE_ID = process.env.EXPO_PUBLIC_DB_ID!;
+export const HABIT_COLLECTION_ID = process.env.EXPO_PUBLIC_HABIT_COLLECTION_ID!;
