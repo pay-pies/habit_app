@@ -1,6 +1,6 @@
 import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect} from "react";
-import { AuthProvider, useAuth } from '../lib/auth-context';
+import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import {PaperProvider} from "react-native-paper"
 
@@ -11,7 +11,7 @@ function RouteGuard({children}: {children: React.ReactNode}) {
 
   useEffect(() => {
     if (isLoadingUser) return;
-    const inAuthGroup = segments[0] === "auth";
+    const inAuthGroup = segments?.[0] === "auth";
     console.log("before if else")
     console.log("User:", user);
     console.log("In Auth Group:", inAuthGroup);

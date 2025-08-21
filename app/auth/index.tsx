@@ -1,7 +1,7 @@
 import {KeyboardAvoidingView, Platform, View, StyleSheet} from "react-native";
 import {Text, TextInput, Button, useTheme} from "react-native-paper"
-import {use, useState} from "react";
-import {useAuth} from "../../lib/auth-context";
+import {useState} from "react";
+import {useAuth} from "@/lib/auth-context";
 import {useRouter} from "expo-router";
 
 export default function AuthScreen() {
@@ -70,8 +70,12 @@ export default function AuthScreen() {
                     
                 }
 
-                <Button mode="contained" style={styles.button} onPress={handleAuth}>{isSignUp ? "Sign Up" : "Sign in"}</Button>
-                <Button mode="text" onPress={handleSwitchMode} style={styles.switchModeButton}>{isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}</Button>
+                <Button mode="contained" style={styles.button} onPress={handleAuth}>
+                    <Text>{isSignUp ? "Sign Up" : "Sign in"}</Text>
+                </Button>
+                <Button mode="text" onPress={handleSwitchMode} style={styles.switchModeButton}>
+                    <Text>{isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}</Text>
+                </Button>
             </View>
         </KeyboardAvoidingView>
     );

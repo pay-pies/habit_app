@@ -1,6 +1,6 @@
 import {View, StyleSheet} from 'react-native';
 import {useState} from 'react';
-import {useAuth} from '../../lib/auth-context';
+import {useAuth} from '@/lib/auth-context';
 import {TextInput, SegmentedButtons, Button, useTheme, Text} from "react-native-paper";
 import {databases, DATABASE_ID, HABIT_COLLECTION_ID} from '../../lib/appwrite';
 import {ID} from 'react-native-appwrite';
@@ -88,7 +88,7 @@ export default function AddHabitScreen() {
             />
             </View>
             <Button mode="contained" onPress={handleSubmit}disabled={!title || !description}>
-                Add Habit
+                <Text>Add Habit</Text>
             </Button>
             {error &&
                     <Text style={{color: theme.colors.error}}>{error}</Text>

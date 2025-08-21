@@ -5,11 +5,10 @@ import { useAuth } from "@/lib/auth-context";
 export default function Index() {
   const {signOut} = useAuth();
   return (
-    <View
-      style={styles.view}>
+    <View style={styles.view}>
       <Text>Edit app/index.tsx to edit this screen.</Text>
       <Button mode="text" onPress={signOut} icon="logout">
-        Sign Out
+        <Text>Sign Out</Text>
         </Button>
     </View>
   );
