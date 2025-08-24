@@ -3,7 +3,7 @@ import {MaterialCommunityIcons} from '@expo/vector-icons';
 
 export default function TabsLayout() {
   return (
-      <Tabs screenOptions={{headerStyle: {
+      <Tabs screenOptions={{headerShown: false, headerStyle: {
       backgroundColor: "#f5f5f5"}, 
       headerShadowVisible: false,
       tabBarStyle: {
@@ -31,7 +31,7 @@ export default function TabsLayout() {
           title: "Streaks", 
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons 
-              name="fire" 
+              name="chart-line" 
               size={size} 
               color={color} />)}}/>
       <Tabs.Screen 

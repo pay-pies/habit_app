@@ -32,7 +32,10 @@ export default function AddHabitScreen() {
     const [error, setError] = useState<string>("");
     const theme = useTheme();
     const handleSubmit = async () => {
-        if (!user) return;
+        if (!user) {
+            setError("You must be signed in to add a habit.");
+            return;
+        }
         console.log("Submitting habit");
         console.log(user);
         try{
@@ -41,17 +44,16 @@ export default function AddHabitScreen() {
             HABIT_COLLECTION_ID, 
             ID.unique(),
             {
-                user_id: user.$id,
+                "user-id": user.$id,
                 title,
                 description,
                 frequency,
-                streak_count: 0,
-                last_completed: new Date().toISOString(),
-                created_at: new Date().toISOString(),
+                "streak-count": 0,
+                "last-completed": new Date().toISOString(),
+                "created-at": new Date().toISOString(),
             }
         );
-        // router.back();
-        router.replace("/");
+        router.back();
     } catch (error) {
         if (error instanceof Error) {
             setError(error.message);
