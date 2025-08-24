@@ -13,6 +13,6 @@ export const DATABASE_ID = process.env.EXPO_PUBLIC_DB_ID!;
 export const HABIT_COLLECTION_ID = 
     process.env.EXPO_PUBLIC_HABIT_COLLECTION_ID!;
     export interface RealTimeResponse {
-        events: string()
-        payload: any()
+        events: string[];
+        payload: any;
     }

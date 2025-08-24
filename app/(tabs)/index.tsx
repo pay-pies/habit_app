@@ -1,21 +1,20 @@
-import {View, StyleSheet} from "react-native";
+import {ScrollView, View, StyleSheet} from "react-native";
 import {Button, Text, Surface} from "react-native-paper";
 import { useAuth } from "@/lib/auth-context";
 import {DATABASE_ID, databases, HABIT_COLLECTION_ID, client, RealTimeResponse} from '@/lib/appwrite';
 import {Query} from 'react-native-appwrite';
-import {useState, useEffect} from 'react';
+import {useState, useEffect, useRef} from 'react';
 import {Habit} from '@/types/databases.type';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import {Swipeable} from "react-native-gesture-handler"
 
 export default function Index() {
   const {signOut, user} = useAuth();
-  console.log("User in Index:", user);
-
   const [habits, setHabits] = useState<Habit[]>([]);
+  const swipeableRefs = useRef<{[key: string]: Swipeable | null}>({})
   useEffect(() => {
-    console.log("useEffect user:", user);
-    if (user) fetchHabits();
-    const channel = `databases.${DATABASE_ID}.collections.${HABITS_COLLECTION_ID}.documents`
+    if (user) {
+    const channel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`
     const habitsSubscription = client.subscribe(
       channel,
       (response: RealTimeResponse) => {
@@ -39,22 +38,50 @@ export default function Index() {
         }
       }
     );
+      fetchHabits();
+      return () => {
+        habitsSubscription();
+      }
+    }
     }, [user]);
   const fetchHabits = async () => {
-    console.log("fetchHabits called");
     try{
       const response = await databases.listDocuments<Habit>(
         DATABASE_ID, 
         HABIT_COLLECTION_ID,
         [Query.equal("user-id", user?.$id ?? "")]
       );
-      console.log("Current user id:", user?.$id);
-      console.log(response.documents);
+      // console.log(response.documents);
       setHabits(response.documents as Habit[]);
     } catch (error) {
       console.error(error);
     }
-  }
+  };
+  const handleDeleteHabit = async (id: string) => {
+    try{
+      await databases.deleteDocument(DATABASE_ID, HABIT_COLLECTION_ID, id);
+    } catch (error){
+      console.error(error);
+    }
+  };
+  const renderRightActions = () => (
+    <View style={styles.swipeActionRight}>
+      <MaterialCommunityIcons 
+        name="check-circle-outline" 
+        size={32} 
+        color={"#fff"}
+        />
+    </View>
+  );
+  const renderLeftActions = () => (
+    <View style={styles.swipeActionLeft}>
+      <MaterialCommunityIcons 
+        name="trash-can-outline" 
+        size={32} 
+        color={"#fff"}
+        />
+    </View>
+  );
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -63,35 +90,54 @@ export default function Index() {
         <Text>Sign Out</Text>
         </Button>
       </View>
-      {habits?.length === 0 ? (
-        <View style={styles.emptyState}>
-          <Text style={styles.emptyStateText}>No habits yet. Add your first habit!</Text>
-        </View>
-      ) : (
-          habits?.map((habit, key) => (
-            <Surface style={styles.card} elevation={0}>
-            <View key={key} style={styles.cardContent}>
-              <Text style={styles.cardTitle}>{habit.title}</Text> 
-              <Text style={styles.cardDescription}>{habit.description}</Text> 
-              <View style={styles.cardFooter}>
-                <View style={styles.streakBadge}>
-                  <MaterialCommunityIcons 
-                    name="fire" 
-                    size={18} 
-                    color={"#ff9800"}/>
-                  <Text style={styles.streakText}>{habit["streak-count"]} day streak</Text>
-                </View>
-                <View style={styles.frequencyBadge}>
-                  <Text style={styles.frequencyText}>
-                    {habit.frequency.charAt(0).toUpperCase() + 
-                    habit.frequency.slice(1)}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </Surface>
-          ))
-        )}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {habits?.length === 0 ? (
+
+          <View style={styles.emptyState}>
+            <Text style={styles.emptyStateText}>No habits yet. Add your first habit!</Text>
+          </View>
+        ) : (
+            habits?.map((habit, key) => (
+              <Swipeable ref={(ref) => {
+                swipeableRefs.current[habit.$id] = ref
+                
+              }}
+              key={key}
+              overshootLeft={false}
+              overshootRight={false}
+              renderLeftActions={renderLeftActions}
+              renderRightActions={renderRightActions}
+              onSwipeableOpen={(direction) => {
+                if (direction === "left"){
+                  handleDeleteHabit(habit.$id);
+                }
+              }}
+            >
+                <Surface style={styles.card} elevation={0}>
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardTitle}>{habit.title}</Text> 
+                    <Text style={styles.cardDescription}>{habit.description}</Text> 
+                    <View style={styles.cardFooter}>
+                      <View style={styles.streakBadge}>
+                        <MaterialCommunityIcons 
+                          name="fire" 
+                          size={18} 
+                          color={"#ff9800"}/>
+                        <Text style={styles.streakText}>{habit["streak-count"]} day streak</Text>
+                      </View>
+                      <View style={styles.frequencyBadge}>
+                        <Text style={styles.frequencyText}>
+                          {habit.frequency.charAt(0).toUpperCase() + 
+                          habit.frequency.slice(1)}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+              </Surface>
+            </Swipeable>
+            ))
+          )}
+        </ScrollView>
       
     </View>
   );
@@ -175,5 +221,25 @@ const styles = StyleSheet.create({
     color: "#666666",
 
   },
+  swipeActionLeft:{
+    justifyContent: "center",
+    alignItems: "flex-start",
+    flex: 1,
+    backgroundColor: "#e53935",
+    borderRadius: 18,
+    marginBottom: 18,
+    marginTop: 2,
+    paddingLeft: 16,
+  },
+  swipeActionRight:{
+    justifyContent: "center",
+    alignItems: "flex-end",
+    flex: 1,
+    backgroundColor: "#4caf50",
+    borderRadius: 18,
+    marginBottom: 18,
+    marginTop: 2,
+    paddingRight: 16,
+  }
 
 })
