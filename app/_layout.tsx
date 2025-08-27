@@ -43,7 +43,7 @@ export default function RootLayout() {
                 <Stack.Screen name="add-habit" options={{headerShown: false}}/>
                 <Stack.Screen name="streaks" options={{headerShown: false}}/>
                 <Stack.Screen name="index" options={{headerShown: false}}/>
-                {/* <Stack.Screen name="auth" options={{ headerShown: false }} /> */}
+                <Stack.Screen name="auth/index" options={{ headerShown: false }} />
               </Stack>
             </RouteGuard>
           </SafeAreaProvider>

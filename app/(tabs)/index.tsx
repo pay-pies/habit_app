@@ -1,16 +1,19 @@
 import {ScrollView, View, StyleSheet} from "react-native";
 import {Button, Text, Surface} from "react-native-paper";
 import { useAuth } from "@/lib/auth-context";
-import {DATABASE_ID, databases, HABIT_COLLECTION_ID, client, RealTimeResponse} from '@/lib/appwrite';
-import {Query} from 'react-native-appwrite';
+import {DATABASE_ID, databases, HABIT_COLLECTION_ID, COMPLETIONS_COLLECTION_ID, client, RealTimeResponse} from '@/lib/appwrite';
+import {Query, ID} from 'react-native-appwrite';
 import {useState, useEffect, useRef} from 'react';
-import {Habit} from '@/types/databases.type';
+import {Habit, HabitCompletion} from '@/types/databases.type';
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import {Swipeable} from "react-native-gesture-handler"
+import {Swipeable} from "react-native-gesture-handler";
+import {useFocusEffect} from "@react-navigation/native";
+import React from "react";
 
 export default function Index() {
   const {signOut, user} = useAuth();
   const [habits, setHabits] = useState<Habit[]>([]);
+  const [completedHabits, setCompletedHabits] = useState<string[]>();
   const swipeableRefs = useRef<{[key: string]: Swipeable | null}>({})
   useEffect(() => {
     if (user) {
@@ -39,11 +42,19 @@ export default function Index() {
       }
     );
       fetchHabits();
+      fetchTodayCompletions();
       return () => {
         habitsSubscription();
       }
     }
     }, [user]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      if (user) fetchHabits();
+    }, [user])
+  );
+
   const fetchHabits = async () => {
     try{
       const response = await databases.listDocuments<Habit>(
@@ -51,8 +62,27 @@ export default function Index() {
         HABIT_COLLECTION_ID,
         [Query.equal("user-id", user?.$id ?? "")]
       );
-      // console.log(response.documents);
       setHabits(response.documents as Habit[]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchTodayCompletions = async () => {
+    try{
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const response = await databases.listDocuments<HabitCompletion>(
+        DATABASE_ID, 
+        COMPLETIONS_COLLECTION_ID,
+        [
+          Query.equal("user-id", user?.$id ?? ""), 
+          Query.greaterThanEqual("completed-at", today.toISOString()),
+        ]
+      );
+      // console.log(response.documents);
+      const completions = response.documents as HabitCompletion[]
+      setCompletedHabits(completions.map((c) => c["habit-id"]));
     } catch (error) {
       console.error(error);
     }
@@ -60,6 +90,33 @@ export default function Index() {
   const handleDeleteHabit = async (id: string) => {
     try{
       await databases.deleteDocument(DATABASE_ID, HABIT_COLLECTION_ID, id);
+      fetchHabits();
+    } catch (error){
+      console.error(error);
+    }
+  };
+  const handleCompleteHabit = async (id: string) => {
+    if (!user || completedHabits?.includes(id)) return;
+    try{
+      const currentDate = new Date().toISOString()
+      await databases.createDocument(
+        DATABASE_ID, 
+        COMPLETIONS_COLLECTION_ID, 
+        ID.unique(),
+        {
+          "habit-id": id,
+          "user-id": user.$id,
+          "completed-at": currentDate,
+        }
+      )
+      fetchHabits();
+      const habit = habits?.find((h) => h.$id === id)
+      if (!habit) return;
+      await databases.updateDocument(DATABASE_ID, HABIT_COLLECTION_ID, id, {
+        "streak-count": habit["streak-count"] + 1,
+        "last-completed": currentDate,
+      });
+      fetchHabits();
     } catch (error){
       console.error(error);
     }
@@ -110,7 +167,11 @@ export default function Index() {
               onSwipeableOpen={(direction) => {
                 if (direction === "left"){
                   handleDeleteHabit(habit.$id);
+                } else if (direction === "right"){
+                  handleCompleteHabit(habit.$id);
                 }
+
+                swipeableRefs.current[habit.$id]?.close()
               }}
             >
                 <Surface style={styles.card} elevation={0}>
@@ -185,7 +246,7 @@ const styles = StyleSheet.create({
   cardFooter:{
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItem: "center",
+    alignItems: "center",
   },
   streakBadge:{
     flexDirection: "row",

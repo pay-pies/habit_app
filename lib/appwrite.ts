@@ -16,3 +16,9 @@ export const HABIT_COLLECTION_ID =
         events: string[];
         payload: any;
     }
+export const COMPLETIONS_COLLECTION_ID = 
+    process.env.EXPO_PUBLIC_COMPLETIONS_COLLECTION_ID!;
+    export interface RealTimeResponse {
+        events: string[];
+        payload: any;
+    }
