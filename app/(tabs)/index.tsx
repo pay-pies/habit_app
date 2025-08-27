@@ -17,9 +17,9 @@ export default function Index() {
   const swipeableRefs = useRef<{[key: string]: Swipeable | null}>({})
   useEffect(() => {
     if (user) {
-    const channel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`
+    const habitsChannel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`
     const habitsSubscription = client.subscribe(
-      channel,
+      habitsChannel,
       (response: RealTimeResponse) => {
         if (response.events.includes(
           "databases.*.collections.*.documents.*.create"
@@ -41,10 +41,23 @@ export default function Index() {
         }
       }
     );
+      const completionsChannel = `databases.${DATABASE_ID}.collections.${COMPLETIONS_COLLECTION_ID}.documents`
+    const completionsSubscription = client.subscribe(
+      completionsChannel,
+      (response: RealTimeResponse) => {
+        if (response.events.includes(
+          "databases.*.collections.*.documents.*.create"
+        )
+      ) {
+          fetchTodayCompletions()
+        } 
+      }
+    );
       fetchHabits();
       fetchTodayCompletions();
       return () => {
         habitsSubscription();
+        completionsSubscription();
       }
     }
     }, [user]);
@@ -121,13 +134,20 @@ export default function Index() {
       console.error(error);
     }
   };
-  const renderRightActions = () => (
+
+  const isHabitCompleted = (habitId: string) => 
+    completedHabits?.includes(habitId);
+  const renderRightActions = (habitId:string) => (
     <View style={styles.swipeActionRight}>
-      <MaterialCommunityIcons 
-        name="check-circle-outline" 
-        size={32} 
-        color={"#fff"}
-        />
+      {isHabitCompleted(habitId) ? (
+        <Text style={{color: "#fff"}}>Completed!</Text>
+      ):(
+        <MaterialCommunityIcons 
+          name="check-circle-outline" 
+          size={32} 
+          color={"#fff"}
+          />
+      )}
     </View>
   );
   const renderLeftActions = () => (
@@ -142,8 +162,8 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text variant="headlineSmall"  style={styles.title}>Today's Habits</Text>
-        <Button mode="text" onPress={signOut} icon="logout">
+        <View style={{ flex: 1 }} />
+        <Button mode="text" onPress={signOut} icon="logout" style={styles.logout}>
         <Text>Sign Out</Text>
         </Button>
       </View>
@@ -163,7 +183,7 @@ export default function Index() {
               overshootLeft={false}
               overshootRight={false}
               renderLeftActions={renderLeftActions}
-              renderRightActions={renderRightActions}
+              renderRightActions={() => renderRightActions(habit.$id)}
               onSwipeableOpen={(direction) => {
                 if (direction === "left"){
                   handleDeleteHabit(habit.$id);
@@ -174,7 +194,7 @@ export default function Index() {
                 swipeableRefs.current[habit.$id]?.close()
               }}
             >
-                <Surface style={styles.card} elevation={0}>
+                <Surface style={[styles.card, isHabitCompleted(habit.$id) && styles.cardCompleted]} elevation={0}>
                   <View style={styles.cardContent}>
                     <Text style={styles.cardTitle}>{habit.title}</Text> 
                     <Text style={styles.cardDescription}>{habit.description}</Text> 
@@ -206,10 +226,10 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   container:{
-      flex: 1,
-      padding: 16,
-      backgroundColor: "#f5f5f5"
-    },
+    flex: 1,
+    padding: 16,
+    backgroundColor: "#f5f5f5"
+  },
   header:{
     flexDirection: "row",
     justifyContent: "space-between",
@@ -228,6 +248,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.08,
     shadowRadius: 8,
     elevation: 4
+  },
+  cardCompleted:{
+    opacity: 0.6,
   },
   cardContent:{
     padding: 20,
@@ -301,6 +324,11 @@ const styles = StyleSheet.create({
     marginBottom: 18,
     marginTop: 2,
     paddingRight: 16,
+  },
+  logout:{
+    flexDirection: "row",
+    alignItems: "center",
+    marginRight: 30,
   }
 
 })

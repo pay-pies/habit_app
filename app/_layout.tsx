@@ -40,10 +40,10 @@ export default function RootLayout() {
             <RouteGuard>
               <Stack>
                 <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                <Stack.Screen name="add-habit" options={{headerShown: false}}/>
-                <Stack.Screen name="streaks" options={{headerShown: false}}/>
-                <Stack.Screen name="index" options={{headerShown: false}}/>
-                <Stack.Screen name="auth/index" options={{ headerShown: false }} />
+                <Stack.Screen name="add-habit" options={{headerShown: true, title: "Add a Habit"}}/>
+                <Stack.Screen name="streaks" options={{headerShown: true, title: "Streaks"}}/>
+                <Stack.Screen name="index" options={{headerShown: true, title: "My Habits"}}/>
+                <Stack.Screen name="auth/index" options={{title: "Log in"}} />
               </Stack>
             </RouteGuard>
           </SafeAreaProvider>
