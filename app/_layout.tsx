@@ -1,17 +1,18 @@
 import { Stack, useRouter, useSegments } from "expo-router";
-import { useEffect} from "react";
+import { useEffect, useState} from "react";
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { DefaultTheme, PaperProvider } from "react-native-paper"
+import { MD3LightTheme, PaperProvider } from "react-native-paper"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 function RouteGuard({children}: {children: React.ReactNode}) {
   const router = useRouter();
   const {user, isLoadingUser} = useAuth();  
   const segments = useSegments();
+  const [error, setError] = useState<string | null>(null); 
+  
 
   useEffect(() => {
-    if (isLoadingUser) return;
     const inAuthGroup = segments?.[0] === "auth";
     console.log("before if else")
     console.log("User:", user);
@@ -19,7 +20,6 @@ function RouteGuard({children}: {children: React.ReactNode}) {
     if (!user && !inAuthGroup && !isLoadingUser) {
       console.log("No user found. Redirecting to /auth");
       router.replace("/auth");
-      // Use window.location.href for client-side navigation
     } else if (user && inAuthGroup && !isLoadingUser) {
       console.log("User found. Redirecting to /");
       router.replace("/");
@@ -35,7 +35,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{flex: 1}}>
       <AuthProvider>
-        <PaperProvider>
+        <PaperProvider theme={MD3LightTheme}>
           <SafeAreaProvider>
             <RouteGuard>
               <Stack>
@@ -43,7 +43,7 @@ export default function RootLayout() {
                 <Stack.Screen name="add-habit" options={{headerShown: true}}/>
                 <Stack.Screen name="streaks" options={{headerShown: true}}/>
                 <Stack.Screen name="index" options={{headerShown: true}}/>
-                <Stack.Screen name="auth/index" options={{headerShown: true}} />
+                <Stack.Screen name="auth/index" options={{headerShown: true, title: "Log in"}} />
               </Stack>
             </RouteGuard>
           </SafeAreaProvider>

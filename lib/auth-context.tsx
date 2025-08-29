@@ -1,6 +1,7 @@
 import {createContext, useContext, useState, useEffect} from "react";
-import {Models, ID, Account} from "react-native-appwrite";
+import {Models, ID} from "react-native-appwrite";
 import { account } from "../lib/appwrite"; 
+import {useRouter} from "expo-router";
 
 
 type AuthContextType = {
@@ -20,10 +21,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     const [isLoadingUser, setIsLoadingUser] = useState<boolean>(true);
 
     useEffect(() => {
-        if (!user && !isLoadingUser){
         getUser();
-        }
-    }, [user])
+    }, [])
 
     const getUser = async () => {
         try {
@@ -62,11 +61,13 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     };
 
     const signOut = async () => {
+        const router = useRouter();
         try{
         await account.deleteSession("current");
         setUser(null);
         console.log("Sign out successful. User state is null.");
-        window.location.href = "/auth"; 
+        router.replace("/auth");
+        window.location.href = "/auth";
         } catch (error) {
             console.log("Sign out failed:", error);
             console.log(error);
