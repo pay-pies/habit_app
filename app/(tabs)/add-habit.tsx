@@ -87,8 +87,8 @@ export default function AddHabitScreen() {
                 }))}
             />
             </View>
-            <Button mode="contained" onPress={handleSubmit}disabled={!title || !description}>
-                <Text>Add Habit</Text>
+            <Button mode="contained" onPress={handleSubmit} disabled={!title || !description}>
+                <Text style={{color: !title || !description ? undefined: "#fff"}}>Add Habit</Text>
             </Button>
             {error &&
                     <Text style={{color: theme.colors.error}}>{error}</Text>

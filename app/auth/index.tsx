@@ -71,7 +71,7 @@ export default function AuthScreen() {
                 }
 
                 <Button mode="contained" style={styles.button} onPress={handleAuth}>
-                    <Text>{isSignUp ? "Sign Up" : "Sign in"}</Text>
+                    <Text style={{color: "#fff",}}>{isSignUp ? "Sign Up" : "Sign in"}</Text>
                 </Button>
                 <Button mode="text" onPress={handleSwitchMode} style={styles.switchModeButton}>
                     <Text>{isSignUp ? "Already have an account? Sign In" : "Don't have an account? Sign Up"}</Text>
