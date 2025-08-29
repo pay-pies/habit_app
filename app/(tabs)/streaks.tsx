@@ -93,13 +93,8 @@ export default function StreaksScreen() {
             );
           
           fetchHabits();
-          fetchCompletions();
-          // return () => {
-          //   habitsSubscription();
-          //   completionsSubscription();
-          // };
-        
-
+          fetchCompletions();  
+              
           interface StreakData {
             streak: number;
             bestStreak: number;

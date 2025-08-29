@@ -36,7 +36,7 @@ export default function TabsLayout() {
               color={color} />)}}/>
       <Tabs.Screen 
         name="add-habit" 
-        options={{
+        options={{    
           title: "Add a Habit", 
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons 
