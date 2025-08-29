@@ -95,7 +95,6 @@ export default function Index() {
           Query.greaterThanEqual("completed-at", today.toISOString()),
         ]
       );
-      // console.log(response.documents);
       const completions = response.documents as HabitCompletion[]
       setCompletedHabits(completions.map((c) => c["habit-id"]));
     } catch (error) {

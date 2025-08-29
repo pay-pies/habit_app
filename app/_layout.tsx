@@ -9,22 +9,14 @@ function RouteGuard({children}: {children: React.ReactNode}) {
   const router = useRouter();
   const {user, isLoadingUser} = useAuth();  
   const segments = useSegments();
-  const [error, setError] = useState<string | null>(null); 
   
-
   useEffect(() => {
     const inAuthGroup = segments?.[0] === "auth";
-    console.log("before if else")
-    console.log("User:", user);
-    console.log("In Auth Group:", inAuthGroup);
     if (!user && !inAuthGroup && !isLoadingUser) {
-      console.log("No user found. Redirecting to /auth");
       router.replace("/auth");
     } else if (user && inAuthGroup && !isLoadingUser) {
-      console.log("User found. Redirecting to /");
       router.replace("/");
     }
-    console.log("after if else")
   }, [user, segments, isLoadingUser, router]);
   
 

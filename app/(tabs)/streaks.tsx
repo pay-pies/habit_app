@@ -33,7 +33,6 @@ export default function StreaksScreen() {
                 COMPLETIONS_COLLECTION_ID,
                 [Query.equal("user-id", user?.$id ?? "")]
               );
-              // console.log(response.documents);
               const completions = response.documents as HabitCompletion[]
               setCompletedHabits(completions);
             } catch (error) {
@@ -158,7 +157,6 @@ export default function StreaksScreen() {
 
         const rankedHabits = habitStreaks.sort((a,b) => b.bestStreak - a.bestStreak);
         const badgeStyles = [styles.badge1, styles.badge2, styles.badge3];
-        console.log(rankedHabits.map((h) => h.habit.title));
     return(
         <View style={styles.container}>
             {rankedHabits.length > 0 && (

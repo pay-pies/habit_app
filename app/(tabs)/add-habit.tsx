@@ -36,8 +36,6 @@ export default function AddHabitScreen() {
             setError("You must be signed in to add a habit.");
             return;
         }
-        console.log("Submitting habit");
-        console.log(user);
         try{
         await databases.createDocument(
             DATABASE_ID, 
