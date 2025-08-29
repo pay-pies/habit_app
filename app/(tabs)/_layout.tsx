@@ -3,7 +3,7 @@ import {MaterialCommunityIcons} from '@expo/vector-icons';
 
 export default function TabsLayout() {
   return (
-      <Tabs screenOptions={{headerShown: false, headerStyle: {
+      <Tabs screenOptions={{headerShown: true, headerStyle: {
       backgroundColor: "#f5f5f5"}, 
       headerShadowVisible: false,
       tabBarStyle: {
@@ -19,7 +19,7 @@ export default function TabsLayout() {
       <Tabs.Screen 
         name="index" 
         options={{
-          title: "Today's Habits", 
+          title: "My Habits", 
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons 
               name="calendar-today" 
@@ -37,7 +37,7 @@ export default function TabsLayout() {
       <Tabs.Screen 
         name="add-habit" 
         options={{
-          title: "Add Habit", 
+          title: "Add a Habit", 
           tabBarIcon: ({color, size}) => (
             <MaterialCommunityIcons 
               name="plus-circle" 

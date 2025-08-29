@@ -2,7 +2,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { useEffect} from "react";
 import { AuthProvider, useAuth } from '@/lib/auth-context';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { PaperProvider } from "react-native-paper"
+import { DefaultTheme, PaperProvider } from "react-native-paper"
 import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 function RouteGuard({children}: {children: React.ReactNode}) {
@@ -40,10 +40,10 @@ export default function RootLayout() {
             <RouteGuard>
               <Stack>
                 <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                <Stack.Screen name="add-habit" options={{headerShown: true, title: "Add a Habit"}}/>
-                <Stack.Screen name="streaks" options={{headerShown: true, title: "Streaks"}}/>
-                <Stack.Screen name="index" options={{headerShown: true, title: "My Habits"}}/>
-                <Stack.Screen name="auth/index" options={{title: "Log in"}} />
+                <Stack.Screen name="add-habit" options={{headerShown: true}}/>
+                <Stack.Screen name="streaks" options={{headerShown: true}}/>
+                <Stack.Screen name="index" options={{headerShown: true}}/>
+                <Stack.Screen name="auth/index" options={{headerShown: true}} />
               </Stack>
             </RouteGuard>
           </SafeAreaProvider>

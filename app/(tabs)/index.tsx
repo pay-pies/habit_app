@@ -15,6 +15,7 @@ export default function Index() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [completedHabits, setCompletedHabits] = useState<string[]>();
   const swipeableRefs = useRef<{[key: string]: Swipeable | null}>({})
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     if (user) {
     const habitsChannel = `databases.${DATABASE_ID}.collections.${HABIT_COLLECTION_ID}.documents`
@@ -77,6 +78,7 @@ export default function Index() {
       );
       setHabits(response.documents as Habit[]);
     } catch (error) {
+      setError("Failed to fetch habits. Please check your connection or try again later.");
       console.error(error);
     }
   };
@@ -122,6 +124,7 @@ export default function Index() {
           "completed-at": currentDate,
         }
       )
+      await fetchTodayCompletions();
       fetchHabits();
       const habit = habits?.find((h) => h.$id === id)
       if (!habit) return;
@@ -167,7 +170,7 @@ export default function Index() {
         <Text>Sign Out</Text>
         </Button>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView>
         {habits?.length === 0 ? (
 
           <View style={styles.emptyState}>
