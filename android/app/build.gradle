@@ -87,9 +87,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.habit_app'
+    namespace 'com.paypies.habit_app'
     defaultConfig {
-        applicationId 'com.anonymous.habit_app'
+        applicationId 'com.paypies.habit_app'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
