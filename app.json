@@ -40,6 +40,11 @@
       "typedRoutes": true
     },
     "extra": {
+      "EXPO_PUBLIC_APPWRITE_ENDPOINT": "https://fra.cloud.appwrite.io/v1",
+      "EXPO_PUBLIC_APPWRITE_PROJECT_ID": "68b3430200230c5c303b",
+      "EXPO_PUBLIC_DB_ID": "68b35787002bc421fe9a",
+      "EXPO_PUBLIC_HABIT_COLLECTION_ID": "68b35caf00165e3dc495",
+      "EXPO_PUBLIC_COMPLETIONS_COLLECTION_ID": "68b35ca8003351aabc91",
       "router": {},
       "eas": {
         "projectId": "adbe5177-5d43-417b-9a88-902c46e2e3c2"
